@@ -2,7 +2,7 @@
 1. I0324034, Anggrek Dara Oktaviano, anggrekdara
 2. I0324035, Aulia Tito Amanullah, auliatitoamanullah
 3. I0324037, Azzahra Baqir Manna', baqirm
-vvvvvvvv
+
 # DESKRIPSI PENGELOLAAN KEUANGAN PRIBADI
 Aplikasi Pengelolaan Keuangan Pribadi yang dirancang untuk membantu pengguna dalam mencatat pemasukan dan pengeluaran pribadi, serta menampilkan laporan keuangan secara keseluruhan dan dapat mengetahui saldo akhir. Program ini berbasis teks dan berjalan di terminal, sehingga memungkinkan pengguna untuk menambahkan transaksi baru dan melihat laporan transaksi pada waktu realtime.
 
