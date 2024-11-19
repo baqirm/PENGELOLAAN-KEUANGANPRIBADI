@@ -10,3 +10,6 @@ Aplikasi Pengelolaan Keuangan Pribadi yang dirancang untuk membantu pengguna dal
 1. Input nominal dan deskripsi pemasukan dan pengeluaran
 2. Perhitungan Saldo Akhir
 3. Output berupa tabel laporan transaksi 
+
+# FLOWCHART
+![flowchart pengelolaan keuangan pribadi](image-1.png)
