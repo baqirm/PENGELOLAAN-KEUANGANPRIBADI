@@ -12,4 +12,4 @@ Aplikasi Pengelolaan Keuangan Pribadi yang dirancang untuk membantu pengguna dal
 3. Output berupa tabel laporan transaksi 
 
 # FLOWCHART
-![flowchart pengelolaan keuangan pribadi](image-1.png)
+![pengelolaan keuangan pribadi](image.png)
