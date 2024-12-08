@@ -4,13 +4,20 @@
 3. I0324037, Azzahra Baqir Manna', baqirm
 
 # DESKRIPSI PENGELOLAAN KEUANGAN PRIBADI
-Aplikasi Pengelolaan Keuangan Pribadi yang dirancang untuk membantu pengguna dalam mencatat pemasukan dan pengeluaran pribadi, serta menampilkan laporan keuangan secara keseluruhan dan dapat mengetahui saldo akhir. Program ini berbasis teks dan berjalan di terminal, sehingga memungkinkan pengguna untuk menambahkan transaksi baru dan melihat laporan transaksi pada waktu realtime. Selain itu, program disertai dengan opsi sign up/login sehingga menambahkan keamanan bagi pengguna.
+Aplikasi Pengelolaan Keuangan Pribadi adalah sebuah program dekstop yang dirancang untuk membantu pengguna dalam mengelola dan melacak keuangan pribadi secara terorganisir. Aplikasi ini memiliki berbagai fitur yang digunakan untuk membantu pengguna mencatat transaksi harian, menganalisis laporan keuangan, dan mengatur keuangan dengan lebih baik. Dengan antarmuka yang sederhana namun menarik, aplikasi ini cocok digunakan oleh pelajar, mahasiswa, pekerja, hingga pemilik usaha kecil.
 
 # FITUR FITUR APLIKASI YANG DIBUAT
-1. Sign up dan Login pengguna
-2. Input nominal dan deskripsi pemasukan dan pengeluaran
-3. Perhitungan Saldo Akhir
-4. Output berupa tabel laporan transaksi 
+1. Sign up dan Sign in pengguna, setiap pengguna memiliki akun pribadi sehingga data keuangan mereka aman dan terpisah dari pengguna lain
+2. Tambah transaksi, untuk mencatat transaksi dengan lebih detail sesuai tanggal yang diinginkan
+3. Tabel Transaksi, semua transaksi yang dicatat ditampilkan dalam tabel 
+4. Ringkasan saldo, berisi total pemasukan, total pengeluaran, dan saldo akhir
+5. Penghitungan Real-Time, perubahan saldo dihitung secara otomatis setiap kali transaksi baru ditambahkan
 
 # FLOWCHART
 ![pengelolaan keuangan pribadi](image.png)
+
+# FLOWCHART REVISI
+![FLOWCHART PENGELOLAAN KEUANGAN PRIBADI](<Flowchart Pengelolaan Keuangan Pribadi.png>)
+
+# SITEMAP APLIKASI KEUANGAN PRIBADI
+![SITEMAP PENGELOLAAN KEUANGAN PRIBADI](<Sitemap Kel 5.png>)
