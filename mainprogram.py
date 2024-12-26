@@ -140,7 +140,7 @@ def add_transaction_user():
         amount = entry_amount.get()
         date = entry_date.get()
 
-        if not amount.replace('.', '', 1).isdigit():  
+        if not amount.replace('.', '',).replace(',', '', 1).isdigit():  
             messagebox.showerror("Error", "Jumlah harus berupa angka.")
             return
 
@@ -178,56 +178,143 @@ def add_transaction_user():
     
     ttk.Button(root, text="Kembali", image=back_icon, compound=tk.LEFT, command=show_main_menu).pack(pady=10)
 
-# Fungsi untuk menampilkan laporan keuangan dalam bentuk tabel
+# Fungsi untuk menampilkan laporan keuangan (Per Bulan dan Per Tahun)
 def show_report():
+    def show_monthly_report():
+        def generate_monthly_report():
+            selected_month = month_combobox.get()
+            selected_year = int(year_combobox.get())
+            month_map = {"Januari": 1, "Februari": 2, "Maret": 3, "April": 4, "Mei": 5, "Juni": 6, "Juli": 7, "Agustus": 8, "September": 9, "Oktober": 10, "November": 11, "Desember": 12}
+            
+            month = month_map[selected_month]
+            income, expense, balance = ts.get_monthly_summary(current_user["username"], selected_year, month)
+            transactions = ts.get_user_transactions(current_user["username"])
+            monthly_transactions = [t for t in transactions if t["date"].year == selected_year and t["date"].month == month]
+            
+            clear_frame()
+            ttk.Label(root, text=f"Laporan Bulanan - {selected_month} {selected_year}", font=("Adventure Time Logo", 30), background="white").pack(pady=20)
+            
+            frame = ttk.Frame(root)
+            frame.pack()
+
+            columns = ("type", "description", "amount", "date")
+            tree = ttk.Treeview(frame, columns=columns, show="headings", height=15)
+            tree.heading("type", text="Tipe Transaksi")
+            tree.heading("description", text="Deskripsi")
+            tree.heading("amount", text="Jumlah")
+            tree.heading("date", text="Tanggal")
+
+            tree.column("type", anchor="center", width=150)
+            tree.column("description", anchor="center", width=300)
+            tree.column("amount", anchor="center", width=150)
+            tree.column("date", anchor="center", width=150)
+
+            tree.pack(fill="both", expand=True, pady=10)
+
+            for transaction in monthly_transactions:
+                formatted_amount = f"{transaction['amount']:,.0f}".replace(",", ".")
+                tree.insert("", "end", values=(transaction["type"], transaction["description"], formatted_amount, transaction["date"].strftime("%Y-%m-%d")))
+
+            formatted_income = f"{income:,.0f}".replace(",", ".")
+            formatted_expense = f"{expense:,.0f}".replace(",", ".")
+            formatted_balance = f"{balance:,.0f}".replace(",", ".")
+
+            ttk.Label(frame, text=f"Total Pendapatan: {formatted_income}", font=("Times New Roman", 16, "bold"), foreground="green").pack(pady=5)
+            ttk.Label(frame, text=f"Total Pengeluaran: {formatted_expense}", font=("Times New Roman", 16, "bold"), foreground="red").pack(pady=5)
+            ttk.Label(frame, text=f"Saldo Bulanan: {formatted_balance}", font=("Times New Roman", 16, "bold"), foreground="blue").pack(pady=5)
+            
+            ttk.Button(root, text="Kembali", command=show_report).pack(pady=10)
+
+        clear_frame()
+        ttk.Label(root, text="Pilih Bulan dan Tahun", font=("Adventure Time Logo", 30), background="white").pack(pady=20)
+
+        month_combobox = ttk.Combobox(root, values=["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"], font=("Times New Roman", 18))
+        month_combobox.pack(pady=10)
+        
+        year_combobox = ttk.Combobox(root, values=list(range(2000, datetime.now().year + 1)), font=("Times New Roman", 18))
+        year_combobox.pack(pady=10)
+
+        ttk.Button(root, text="Tampilkan", command=generate_monthly_report).pack(pady=10)
+        ttk.Button(root, text="Kembali", command=show_report).pack(pady=10)
+
+    def show_yearly_report():
+        def generate_yearly_report():
+            selected_year = int(year_combobox.get())
+            income, expense, balance = ts.get_yearly_summary(current_user["username"], selected_year)
+            transactions = ts.get_user_transactions(current_user["username"])
+            
+            monthly_summary = {}
+            for transaction in transactions:
+                if transaction["date"].year == selected_year:
+                    month = transaction["date"].month
+                    if month not in monthly_summary:
+                        monthly_summary[month] = {"income": 0, "expense": 0}
+                    if transaction["type"] == "Income":
+                        monthly_summary[month]["income"] += transaction["amount"]
+                    elif transaction["type"] == "Expense":
+                        monthly_summary[month]["expense"] += transaction["amount"]
+
+            total_income = sum(summary["income"] for summary in monthly_summary.values())
+            total_expense = sum(summary["expense"] for summary in monthly_summary.values())
+            total_balance = total_income - total_expense
+
+            clear_frame()
+            ttk.Label(root, text=f"Laporan Tahunan - {selected_year}", font=("Adventure Time Logo", 30), background="white").pack(pady=20)
+            
+            frame = ttk.Frame(root)
+            frame.pack()
+
+            columns = ("month", "income", "expense", "balance")
+            tree = ttk.Treeview(frame, columns=columns, show="headings", height=15)
+            tree.heading("month", text="Bulan")
+            tree.heading("income", text="Pendapatan")
+            tree.heading("expense", text="Pengeluaran")
+            tree.heading("balance", text="Saldo")
+
+            tree.column("month", anchor="center", width=150)
+            tree.column("income", anchor="center", width=150)
+            tree.column("expense", anchor="center", width=150)
+            tree.column("balance", anchor="center", width=150)
+
+            tree.pack(fill="both", expand=True, pady=10)
+
+            month_names = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+
+            for month, summary in sorted(monthly_summary.items()):
+                income = summary["income"]
+                expense = summary["expense"]
+                balance = income - expense
+                formatted_income = f"{income:,.0f}".replace(",", ".")
+                formatted_expense = f"{expense:,.0f}".replace(",", ".")
+                formatted_balance = f"{balance:,.0f}".replace(",", ".")
+                tree.insert("", "end", values=(month_names[month - 1], formatted_income, formatted_expense, formatted_balance))
+
+            formatted_total_income = f"{total_income:,.0f}".replace(",", ".")
+            formatted_total_expense = f"{total_expense:,.0f}".replace(",", ".")
+            formatted_total_balance = f"{total_balance:,.0f}".replace(",", ".")
+
+            ttk.Label(frame, text=f"Total Pendapatan Tahunan: {formatted_total_income}", font=("Times New Roman", 16, "bold"), foreground="green").pack(pady=5)
+            ttk.Label(frame, text=f"Total Pengeluaran Tahunan: {formatted_total_expense}", font=("Times New Roman", 16, "bold"), foreground="red").pack(pady=5)
+            ttk.Label(frame, text=f"Saldo Akhir Tahunan: {formatted_total_balance}", font=("Times New Roman", 16, "bold"), foreground="blue").pack(pady=5)
+            
+            ttk.Button(root, text="Kembali", command=show_report).pack(pady=10)
+        clear_frame()
+        ttk.Label(root, text="Pilih Tahun", font=("Adventure Time Logo", 30), background="white").pack(pady=20)
+
+        year_combobox = ttk.Combobox(root, values=list(range(2000, datetime.now().year + 1)), font=("Times New Roman", 18))
+        year_combobox.pack(pady=10)
+
+        ttk.Button(root, text="Tampilkan", command=generate_yearly_report).pack(pady=10)
+        ttk.Button(root, text="Kembali", command=show_report).pack(pady=10)
+
     clear_frame()
-    
+
     ttk.Label(root, text="Laporan Keuangan", font=("Adventure Time Logo", 45), background="white").pack(pady=20)
-
-    frame = ttk.Frame(root, width=800, height=400)
-    frame.pack()
-
-    # Membuat style untuk Treeview
-    style = ttk.Style()
-    style.configure("Treeview", font=("Times New Roman", 14,))
-    style.configure("Treeview.Heading", font=("Times New Roman", 16,), foreground="blue")
-
-    columns = ("type", "description", "amount", "date")
-    tree = ttk.Treeview(frame, columns=columns, show="headings", height=15)
-    tree.heading("type", text="Tipe Transaksi")
-    tree.heading("description", text="Deskripsi")
-    tree.heading("amount", text="Jumlah")
-    tree.heading("date", text="Tanggal")
     
-    tree.column("type", anchor="center", width=165)
-    tree.column("description", anchor="center", width=285)
-    tree.column("amount", anchor="center", width=165)
-    tree.column("date", anchor="center", width=165)
-    
-    tree.pack(fill="both", expand=True, pady=10)
-
-    transactions = ts.get_user_transactions(current_user["username"])
-    for transaction in transactions:
-        formatted_amount = f"{float(transaction['amount']):,.0f}".replace(',', '.')
-        tree.insert("", "end", values=(transaction["type"], transaction["description"], formatted_amount, transaction["date"]))
-
-    # Menghitung dan menampilkan saldo
-    total_income, total_expense, total_balance = ts.get_user_balance(current_user["username"])
-    print(f"Total Income: {total_income}, Total Expense: {total_expense}, Total Balance: {total_balance}")  
-
-    formatted_income = f"{total_income:,.0f}".replace(',', '.')
-    formatted_expense = f"{total_expense:,.0f}".replace(',', '.')
-    formatted_balance = f"{total_balance:,.0f}".replace(',', '.')
-
-    # Menampilkan saldo
-    ttk.Label(frame, text=f"Total Pendapatan: {formatted_income}", font=("Times New Roman", 16, "bold"), foreground="purple").pack(pady=10)
-    ttk.Label(frame, text=f"Total Pengeluaran: {formatted_expense}", font=("Times New Roman", 16, "bold"), foreground="red").pack(pady=10)
-    ttk.Label(frame, text=f"Saldo Akhir: {formatted_balance}", font=("Times New Roman", 16, "bold"), foreground="brown").pack(pady=10)
-
-    global back_icon
-    back_icon = resize_image("BACK.png",(50,50))
-    ttk.Button(root, text="Kembali", image=back_icon, compound=tk.LEFT, command=show_main_menu).pack(pady=10)
-    
+    ttk.Button(root, text="Laporan Per Bulan", command=show_monthly_report).pack(pady=10)
+    ttk.Button(root, text="Laporan Per Tahun", command=show_yearly_report).pack(pady=10)
+    ttk.Button(root, text="Kembali", command=show_main_menu).pack(pady=10)
+          
 # Menu utama
 def show_main_menu():
     clear_frame()
