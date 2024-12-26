@@ -1,14 +1,15 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from tkinter import font as tkFont
+from datetime import datetime 
 from PIL import Image, ImageTk
-import user as us 
+import users as us 
 import transactions as ts
 
 # Inisialisasi aplikasi
 root = tk.Tk()
 root.title("Aplikasi Pengelolaan Uang")
-root.geometry("1600x900")
+root.geometry("1800x900")
 
 # Mengatur tema warna
 theme_colors = {
@@ -139,17 +140,18 @@ def add_transaction_user():
         amount = entry_amount.get()
         date = entry_date.get()
 
-        if t_type and description and amount and date:
-            try:
-                amount = (amount.replace('.', '').replace(',', ''))
-                ts.add_transaction(current_user["username"], t_type, description, amount, date)
-                messagebox.showinfo("Success", "Transaksi berhasil disimpan.")
-                show_main_menu()
-            except ValueError:
-                messagebox.showerror("Error", "Jumlah harus berupa angka.")
-        else:
-            messagebox.showerror("Error", "Harap isi semua kolom.")
-            
+        if not amount.replace('.', '', 1).isdigit():  
+            messagebox.showerror("Error", "Jumlah harus berupa angka.")
+            return
+
+        try:
+            validated_date = ts.validate_date(date) 
+            amount = amount.replace('.', '').replace(',', '')
+            ts.add_transaction(current_user["username"], t_type, description, amount, validated_date.strftime("%Y-%m-%d"))
+            messagebox.showinfo("Success", "Transaksi berhasil disimpan.")
+            show_main_menu()
+        except ValueError as e:
+            messagebox.showerror("Error", str(e)) 
 
     clear_frame()
     ttk.Label(root, text="Tambah Transaksi", font=("Adventure Time Logo", 45), background="white").pack(pady=20)
@@ -225,7 +227,7 @@ def show_report():
     global back_icon
     back_icon = resize_image("BACK.png",(50,50))
     ttk.Button(root, text="Kembali", image=back_icon, compound=tk.LEFT, command=show_main_menu).pack(pady=10)
-
+    
 # Menu utama
 def show_main_menu():
     clear_frame()
