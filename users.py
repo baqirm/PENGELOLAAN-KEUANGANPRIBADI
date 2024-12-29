@@ -1,5 +1,6 @@
 import csv
 import os
+import hashlib
 
 USER_FILE = "users.csv"
 
@@ -22,6 +23,9 @@ def write_users(users):
         writer.writeheader()  
         writer.writerows(users) 
 
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
 def sign_up(username, password, email):
     users = read_users()  
     if any(user["username"] == username for user in users):
@@ -34,7 +38,7 @@ def sign_up(username, password, email):
     users.append({
         "id": user_id,
         "username": username,
-        "password": password, 
+        "password": hash_password(password),  
         "email": email
     })
     write_users(users)  
@@ -44,7 +48,7 @@ def sign_in(username, password):
     users = read_users()  
     for user in users:
         if user["username"] == username:
-            if user["password"] == password: 
+            if user["password"] == hash_password(password): 
                 return user  
             else:
                 return "Kata sandi salah."

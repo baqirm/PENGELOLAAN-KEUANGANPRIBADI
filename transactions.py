@@ -49,7 +49,7 @@ def add_transaction(username, t_type, description, amount, date_str):
         "amount": float(amount),
         "date": date
     })
-    transactions.sort(key=lambda x: (x["date"].year, x["date"].month, x["date"].day))  # Sort by date
+    transactions.sort(key=lambda x: (x["date"].year, x["date"].month, x["date"].day))  
     write_transactions(transactions)
  
 

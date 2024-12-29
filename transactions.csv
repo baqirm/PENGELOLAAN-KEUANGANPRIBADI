@@ -5,3 +5,4 @@ id,username,type,description,amount,date
 1,anggrek,Income,Gaji,5000000.0,2024-12-13
 2,anggrek,Expense,Jajan,50000.0,2024-12-18
 3,anggrek,Expense,jajan,10000.0,2024-12-26
+7,anggrek,Expense,jajan,50000.0,2024-12-28
