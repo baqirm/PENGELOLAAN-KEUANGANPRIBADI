@@ -26,6 +26,14 @@ def write_users(users):
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
+def hash_existing_passwords():
+    users = read_users()  
+    for user in users:
+        if len(user["password"]) < 64:
+            user["password"] = hash_password(user["password"])
+    write_users(users) 
+    print("Semua password telah di-hash.")
+
 def sign_up(username, password, email):
     users = read_users()  
     if any(user["username"] == username for user in users):
@@ -56,3 +64,5 @@ def sign_in(username, password):
 
 def get_all_users():
     return read_users()
+
+hash_existing_passwords()
